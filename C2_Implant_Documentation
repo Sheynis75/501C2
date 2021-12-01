@@ -19,6 +19,8 @@ Parameters: (Use c2's public key's to encrypt parameters)
 *check in time
 *connecting ip address
 *sleep time (time before next call)
+*guid
+*computer name
 *Diffie Hellman's key exchange (give g^a mod p) = s0
 
 Response:
@@ -27,9 +29,8 @@ Response:
 
 Flow:
 C2 decrypts body using its secret key, authorize the "authorize code".
-if correct: save agent's id, check in time, connecting ip, next checkin time and generates key exchange (g^b mod p) = s1 and send ("success", s1) to agent. save session id = s0^b mod p
+if correct: save agent's information into database and generates key exchange (g^b mod p) = s1 and send ("success", s1) to agent. save session id = s0^b mod p
 if incorrect: don't reply
 
 After successful api call:
-C2 saved agent in database, C2 and agent also have a shared symmetric key that they can use for communication
-
+C2 save agent in database, C2 and agent also have a shared symmetric key (session id) that they can use for communication
