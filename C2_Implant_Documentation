@@ -1,11 +1,35 @@
 *****DOCUMENTATION FOR C2 AND IMPLANT API*****
+Assumptions:
+C2 have...
+-asymmetric key pair (Ek, Dk)
+-authorize code
+-Zp, g
 
-***To check in/authorize***
-flow: implant -> c2 with /api_path
+Agent have...
+-c2's public key (Ek)
+-authorize code
+-Zp, g
 
-Parameters:
-*c2's public key encryption
-*authorize code
-*agent's name
+*****To check in/authorize*****
+implant -> c2 with /checkin
+
+Parameters: (Use c2's public key's to encrypt parameters)
+*authorize code 
+*agent's id
+*check in time
+*connecting ip address
+*sleep time (time before next call)
+*Diffie Hellman's key exchange (give g^a mod p) = s0
 
 Response:
+*statue of the checkin
+*diffie hellman's key exchange (give g^b mod p) = s1
+
+Flow:
+C2 decrypts body using its secret key, authorize the "authorize code".
+if correct: save agent's id, check in time, connecting ip, next checkin time and generates key exchange (g^b mod p) = s1 and send ("success", s1) to agent. save session id = s0^b mod p
+if incorrect: don't reply
+
+After successful api call:
+C2 saved agent in database, C2 and agent also have a shared symmetric key that they can use for communication
+
