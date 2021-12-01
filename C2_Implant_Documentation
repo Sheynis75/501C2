@@ -1,0 +1,11 @@
+*****DOCUMENTATION FOR C2 AND IMPLANT API*****
+
+***To check in/authorize***
+flow: implant -> c2 with /api_path
+
+Parameters:
+*c2's public key encryption
+*authorize code
+*agent's name
+
+Response:
