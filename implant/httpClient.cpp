@@ -18,6 +18,8 @@ wstring HTTP::makeHttpRequest(wstring fqdn, int port, wstring uri, bool useTLS){
     hSession = WinHttpOpen( agent, WINHTTP_ACCESS_TYPE_NO_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if(hSession){
         hConnect = WinHttpConnect( hSession, fqdn.data(), port, 0);
+    }else{
+        wprintf(L"Failed to open session :(, error: 0x%x\n", GetLastError());
     }
     if(hConnect){
         DWORD tls = 0;
@@ -25,6 +27,8 @@ wstring HTTP::makeHttpRequest(wstring fqdn, int port, wstring uri, bool useTLS){
             tls = WINHTTP_FLAG_SECURE;
         }
         hRequest = WinHttpOpenRequest( hConnect, L"GET", uri.data(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, tls);
+    }else{
+        wprintf(L"Error 0x%x when connecting session\n", GetLastError());
     }
     if(hRequest){
         if(useTLS){
@@ -35,10 +39,19 @@ wstring HTTP::makeHttpRequest(wstring fqdn, int port, wstring uri, bool useTLS){
                 wcout << GetLastError() << endl;
             }
         }
-        bResults = WinHttpSendRequest( hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA,0,0,0);
+        if(additionalHeader == NULL){
+            bResults = WinHttpSendRequest( hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA,0,0,0);
+        }else{
+            bResults = WinHttpSendRequest( hRequest, additionalHeader, header_size, WINHTTP_NO_REQUEST_DATA,0,0,0);
+        }
+        
+    }else{
+        wprintf(L"Error 0x%x when opening request\n" + GetLastError());
     }
     if (bResults){
         bResults = WinHttpReceiveResponse( hRequest, NULL);
+    }else{
+        wprintf(L"Send error?? 0x%x\n", GetLastError());
     }
 
     // Keep checking for data until there is nothing left.
