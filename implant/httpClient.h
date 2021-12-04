@@ -6,5 +6,8 @@
 class HTTP{
     public:
         std::wstring makeHttpRequest(std::wstring fqdn, int port, std::wstring uri, bool useTLS);
+        LPCWSTR additionalHeader = NULL;
+        DWORD header_size = 0;
+        
 };
 
