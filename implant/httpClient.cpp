@@ -1,35 +1,68 @@
 #include "httpClient.h"
 
-/* reference: code snippet from https://docs.microsoft.com/en-us/windows/win32/api/winhttp/nf-winhttp-winhttpreaddata */
-/* Collaborated with Alex, Carlos & Akshey */
 using namespace std;
-
-wstring HTTP::makeHttpRequest(wstring fqdn, int port, wstring uri, bool useTLS){
+//constructor
+HTTP::HTTP(){
     LPCWSTR agent = L"agent1337";
+    hSession = WinHttpOpen( agent, WINHTTP_ACCESS_TYPE_NO_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+    if(!hSession){
+        wprintf(L"Failed to open session :(\n");
+    }
+}
+
+HTTP::~HTTP(){
+    // close all open handles
+    if(hSession){
+        WinHttpCloseHandle(hSession);
+    }
+    if(hConnect){
+        WinHttpCloseHandle(hConnect);
+    }
+    if(hRequest){
+        WinHttpCloseHandle(hRequest);
+    }
+}
+
+//uses WinHttpConnect
+DWORD HTTP::connectToServer(wstring fqdn, int port){
+    if(hSession){
+        hConnect = WinHttpConnect( hSession, fqdn.data(), port, 0);
+        if(!hConnect){
+            wprintf(L"Failed to connect to server\n");
+            return GetLastError();
+        }
+    }else{
+        wprintf(L"Failed to open session :(\n");
+    }
+    return 0;
+}
+
+int HTTP::checkConnection(){
+    if(hConnect && hSession){
+        return 1;
+    }
+    return 0;
+}
+
+wstring HTTP::makeHttpRequest(wstring method, wstring uri, bool useTLS){
     LPWSTR buffer;
     wstring result;
-
-    // this is mainly from code snippet provided from reference above
-    HINTERNET  hSession = NULL, hConnect = NULL, hRequest = NULL;
     BOOL bResults = false;
     DWORD dwSize = 0, dwDownloaded = 0;
     LPSTR pszOutBuffer;
-
-    hSession = WinHttpOpen( agent, WINHTTP_ACCESS_TYPE_NO_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-    if(hSession){
-        hConnect = WinHttpConnect( hSession, fqdn.data(), port, 0);
-    }else{
-        wprintf(L"Failed to open session :(, error: 0x%x\n", GetLastError());
-    }
+    
+    //if connected to server, open a request
     if(hConnect){
         DWORD tls = 0;
         if(useTLS){
             tls = WINHTTP_FLAG_SECURE;
         }
-        hRequest = WinHttpOpenRequest( hConnect, L"GET", uri.data(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, tls);
+        hRequest = WinHttpOpenRequest( hConnect, method.data(), uri.data(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, tls);
     }else{
-        wprintf(L"Error 0x%x when connecting session\n", GetLastError());
+        wprintf(L"Have to connect to server first\n");
+        return L"nope:D";
     }
+
     if(hRequest){
         if(useTLS){
             //disable certificate verification 
@@ -39,19 +72,32 @@ wstring HTTP::makeHttpRequest(wstring fqdn, int port, wstring uri, bool useTLS){
                 wcout << GetLastError() << endl;
             }
         }
-        if(additionalHeader == NULL){
-            bResults = WinHttpSendRequest( hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA,0,0,0);
+
+        //send the request
+        if(additionalHeader == NULL || header_size == 0){
+            if(requestData == NULL || data_size == 0){
+                bResults = WinHttpSendRequest( hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA,0,0,0);
+            }else{
+                bResults = WinHttpSendRequest( hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, (LPVOID)requestData,data_size,data_size,0);
+            }
         }else{
-            bResults = WinHttpSendRequest( hRequest, additionalHeader, header_size, WINHTTP_NO_REQUEST_DATA,0,0,0);
+            if(requestData == NULL || data_size == 0){
+                bResults = WinHttpSendRequest( hRequest, additionalHeader, header_size, WINHTTP_NO_REQUEST_DATA,0,0,0);
+            }else{
+                bResults = WinHttpSendRequest( hRequest, additionalHeader, header_size, (LPVOID)requestData,data_size,data_size,0);
+            }
+            
         }
-        
+
+        //check request
+        if (bResults){
+            bResults = WinHttpReceiveResponse( hRequest, NULL);
+        }else{
+            wprintf(L"Send error?? 0x%x\n", GetLastError());
+        }
     }else{
-        wprintf(L"Error 0x%x when opening request\n" + GetLastError());
-    }
-    if (bResults){
-        bResults = WinHttpReceiveResponse( hRequest, NULL);
-    }else{
-        wprintf(L"Send error?? 0x%x\n", GetLastError());
+        wprintf(L"Couldn't Open request\n");
+        return L"Couldn't open request";
     }
 
     // Keep checking for data until there is nothing left.
@@ -97,17 +143,6 @@ wstring HTTP::makeHttpRequest(wstring fqdn, int port, wstring uri, bool useTLS){
                 break;
                 
         } while (dwSize > 0);
-    }
-
-    // close all open handles
-    if(hSession){
-        WinHttpCloseHandle(hSession);
-    }
-    if(hConnect){
-        WinHttpCloseHandle(hConnect);
-    }
-    if(hRequest){
-        WinHttpCloseHandle(hRequest);
     }
 
     return result;
