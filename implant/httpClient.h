@@ -4,10 +4,16 @@
 #include <winhttp.h>
 
 class HTTP{
+    private:
+        HINTERNET hSession = NULL, hConnect = NULL, hRequest = NULL;
     public:
-        std::wstring makeHttpRequest(std::wstring fqdn, int port, std::wstring uri, bool useTLS);
+        HTTP();
+        ~HTTP();
+        int checkConnection();
+        DWORD connectToServer(std::wstring fqdn, int port);
+        std::wstring makeHttpRequest(std::wstring method, std::wstring uri, bool useTLS);
         LPCWSTR additionalHeader = NULL;
-        DWORD header_size = 0;
-        
+        DWORD header_size = 0;  
+        char* requestData = NULL;
+        DWORD data_size = 0;   
 };
-
