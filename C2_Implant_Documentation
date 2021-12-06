@@ -15,8 +15,6 @@ implant -> c2 with /checkin
 
 Parameters: (Use c2's public key's to encrypt parameters)
 *authorize code 
-*agent's id
-*check in time
 *connecting ip address
 *sleep time (time before next call)
 *guid
