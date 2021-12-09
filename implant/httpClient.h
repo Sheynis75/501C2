@@ -11,7 +11,7 @@ class HTTP{
         ~HTTP();
         int checkConnection();
         DWORD connectToServer(std::wstring fqdn, int port);
-        std::wstring makeHttpRequest(std::wstring method, std::wstring uri, bool useTLS);
+        std::string makeHttpRequest(std::wstring method, std::wstring uri, bool useTLS);
         LPCWSTR additionalHeader = NULL;
         DWORD header_size = 0;  
         const char* requestData = NULL;
