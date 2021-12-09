@@ -34,7 +34,7 @@ def post(url="", deets=payload, headers=headers):
     print(r.text)
 
 def remote(IP, cmds):
-    print("passed")
+    print("passed in the following commands")
     print(cmds)
     post("remote", {"IP":IP,"cmds":cmds})
     

