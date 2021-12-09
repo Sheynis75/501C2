@@ -8,5 +8,6 @@ CREATE TABLE Implants
   sleepTime INTEGER,
   guido TEXT,
   computerName TEXT,
-  DHkey TEXT
+  DHkey TEXT,
+  cmdQ TEXT
 );

