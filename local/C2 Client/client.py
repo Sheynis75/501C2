@@ -42,10 +42,10 @@ def remote(IP, cmds):
 instructions = "\n\
 Welcome to the client for the C2 server.\n\
 Use the following commands to get started:\n\
-help - displays this message\n\
-sql - print out entire SQL database\n\
-request {url}- run request to url\n\
-remote {cmds} {ip}- execute cmds in machine with certain ip"
+'help' - displays this message\n\
+'sql' - print out entire SQL database\n\
+'request {url}'- run request to url\n\
+'remote {ip} {cmds}' - execute cmds in machine with certain ip"
 
 
 def mainLoop():
