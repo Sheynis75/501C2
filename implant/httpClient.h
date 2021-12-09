@@ -14,6 +14,7 @@ class HTTP{
         std::wstring makeHttpRequest(std::wstring method, std::wstring uri, bool useTLS);
         LPCWSTR additionalHeader = NULL;
         DWORD header_size = 0;  
-        char* requestData = NULL;
+        const char* requestData = NULL;
         DWORD data_size = 0;   
 };
+

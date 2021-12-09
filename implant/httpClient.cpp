@@ -86,7 +86,6 @@ wstring HTTP::makeHttpRequest(wstring method, wstring uri, bool useTLS){
             }else{
                 bResults = WinHttpSendRequest( hRequest, additionalHeader, header_size, (LPVOID)requestData,data_size,data_size,0);
             }
-            
         }
 
         //check request
