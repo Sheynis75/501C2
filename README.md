@@ -1,5 +1,10 @@
 # 501C2
-This is the repo for CS501 Final Project
+Our final project for CS 501 had us build a C2 framework which would be allow us to inject malware into server and control its actions on the victim machine. In order to do so, we needed to create 3 seperate components which make up a framework. These components are as follows:
+
+## C2
+The C2, also known as the command or control center, needs to be able to handle connections from multiple operators, and multiple implants. Our C2 was built using flask in python. Once built, we hosted it on a local machine which was then moved to the public DDNS of cs501kai.ddns.net. 
+Our C2 has the following features:
+-- Uses MySQL database
 
 ## Built With
 + [Flask](https://flask.palletsprojects.com/en/2.0.x/)
