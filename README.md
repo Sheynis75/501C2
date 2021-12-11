@@ -12,9 +12,9 @@ The implant is a dropper which is too load the malware on to the victim machine.
   - Persistence- Adds itself to Registry key “HKEY_CURRENT_USERSoftware\Microsoft\Windows\CurrentVersion\Run”
   - Gets machine guid and name and sends it to c2
   - Request jobs/tasks from c2, executes it, and returns the output of those tasks back to c2
-  - Tasks which include but are not limited to
-  -    Stealer
-  -    Powershell command shells
+  - Tasks which include but are not limited to:
+    - Stealer
+    - Powershell command shells
 
 ## Built With
 + [Flask](https://flask.palletsprojects.com/en/2.0.x/)
