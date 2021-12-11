@@ -4,7 +4,11 @@ Our final project for CS 501 had us build a C2 framework which would be allow us
 ## C2
 The C2, also known as the command or control center, needs to be able to handle connections from multiple operators, and multiple implants. Our C2 was built using flask in python. Once built, we hosted it on a local machine which was then moved to the public DDNS of cs501kai.ddns.net. 
 Our C2 has the following features:
--- Uses MySQL database
+  -- Uses MySQL database
+
+## Implant
+The implant is a dropper which is too load the malware on to the victim machine. For our implant, we attempted to implement reflective DLL injection as a way to load the malware. Features of our implant include:
+  - Checking for ch0nky.txt in the malware
 
 ## Built With
 + [Flask](https://flask.palletsprojects.com/en/2.0.x/)
