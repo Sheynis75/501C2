@@ -19,7 +19,7 @@ The implant is a dropper which is too load the malware on to the victim machine.
 ## Client
 The client is built with python and is used to communicate with the C2 server. It is able to send GET or POST requests anywhere but at default is set to do this with the C2. Can send steganographic images over to the C2 allowing for messages to be hidden within images.
 
-## Special Feature
+## Special Feature (Steganography)
 The special feature we chose to implement in our final project was Steganography. Steganpgraphy is the action of hiding a message in another message or in our case an image. There are many ways to do this, but we chose to implement it using least significant bit steganography. This method involves taking the RGB matrix of the image and xoring the least siginificant value in it with the ASCII value of the corresponding character in the message. This is done unitl the entire message has been coded into the image. In some instances there is a noticeable difference between the original image and the image with hidden text, therefore we have implemented an RSA encyrption scheme which adds an extra layer of security for the message.
 
 ## Built With
@@ -27,3 +27,10 @@ The special feature we chose to implement in our final project was Steganography
 + [MySQL](https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/index.html)
 + [Python](https://docs.python.org/3/)
 + [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-170)
+
+## Group Members
+Jason Chow  
+Carlos Lopez  
+Akshey Nischal  
+Jahyung Yun  
+Alexandre Dennis  
