@@ -29,8 +29,8 @@ The special feature we chose to implement in our final project was Steganography
 + [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-170)
 
 ## Group Members
-Jason Chow  (C2, Implants, Steganography)
-Carlos Lopez  (C2, Client, Steganography)
-Akshey Nischal  (C2, Client, Steganography)
-Jahyung Yun  (C2, Client, Implants)
-Alexandre Dennis  (C2 & Client)
+Jason Chow (C2, Implants, Steganography)  
+Carlos Lopez (C2, Client, Steganography)  
+Akshey Nischal (C2, Client, Steganography)  
+Jahyung Yun (C2, Client, Implants)  
+Alexandre Dennis (C2 & Client)
